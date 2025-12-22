@@ -85,6 +85,13 @@ public class Rating {
         return communication;
     }
 
+    @Transient //tells JPA: this is NOT a column.
+    //You must call this and display it in the screen.
+    public double getOverallRating() {
+        return (punctuality + safety + communication) / 3.0;
+    }
+
+
     public Parent getParent() {
         return parent;
     }
@@ -110,6 +117,7 @@ public class Rating {
                 ", punctuality=" + getPunctuality() +
                 ", safety=" + getSafety() +
                 ", communication=" + getCommunication() +
+                ", Overall Rating=" + getOverallRating() +
                 ", parent=" + getParent() +
                 ", driver=" + getDriver() +
                 ", booking=" + getBooking() +
