@@ -33,17 +33,22 @@ public class Admin extends User {
         this.address = builder.address;
         this.authentication = builder.authentication;
         this.role = builder.role;
+        this.permissionLevel = builder.permissionLevel;
     }
 
     public LocalDateTime getLastLogin() {
         return lastLogin;
     }
 
+    public PermissionLevel getPermissionLevel() {
+        return permissionLevel;
+    }
+
     @Override
     public String toString() {
         return "Admin{" +
                 "lastLogin=" + getLastLogin() +
-                ", userId=" + getUserId() +
+                ", adminId=" + getUserId() +
                 ", firstName='" + getFirstName() + '\'' +
                 ", lastName='" + getLastName() + '\'' +
                 ", createdAt=" + getCreatedAt() +
@@ -52,6 +57,7 @@ public class Admin extends User {
                 ", address=" + getAddress() +
                 ", authentication=" + getAuthentication() +
                 ", role=" + getRole() +
+                ", permissionLevel=" + getPermissionLevel() +
                 '}';
     }
 
@@ -66,6 +72,7 @@ public class Admin extends User {
         private Address address;
         private Authentication authentication;
         private Role role;
+        private PermissionLevel permissionLevel;
 
         public Builder setLastLogin(LocalDateTime lastLogin) {
             this.lastLogin = lastLogin;
@@ -107,6 +114,10 @@ public class Admin extends User {
             this.role = role;
             return this;
         }
+        public Builder setPermissionLevel(PermissionLevel permissionLevel) {
+            this.permissionLevel = permissionLevel;
+            return this;
+        }
 
         public Builder copy(Admin admin) {
             this.lastLogin = admin.getLastLogin();
@@ -119,6 +130,7 @@ public class Admin extends User {
             this.address = admin.getAddress();
             this.authentication = admin.getAuthentication();
             this.role = admin.getRole();
+            this.permissionLevel = admin.getPermissionLevel();
             return this;
         }
 

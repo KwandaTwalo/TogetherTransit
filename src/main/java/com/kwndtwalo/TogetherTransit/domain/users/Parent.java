@@ -27,7 +27,7 @@ public class Parent extends User {
     @Override
     public String toString() {
         return "Parent{" +
-                "userId=" + getUserId() +
+                "parentId=" + getUserId() +
                 ", firstName='" + getFirstName() + '\'' +
                 ", lastName='" + getLastName() + '\'' +
                 ", createdAt=" + getCreatedAt() +
