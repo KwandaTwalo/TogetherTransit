@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Entity
 public class Driver extends User {
 
-    private Long licenseNumber;
+    private String licenseNumber;
     private int ratingAverage;
 
     protected Driver() {
@@ -29,7 +29,7 @@ public class Driver extends User {
         this.role = builder.role;
     }
 
-    public Long getLicenseNumber() {
+    public String getLicenseNumber() {
         return licenseNumber;
     }
 
@@ -40,9 +40,9 @@ public class Driver extends User {
     @Override
     public String toString() {
         return "Driver{" +
-                "licenseNumber=" + getLicenseNumber() +
+                "driverId=" + getUserId() +
+                ", licenseNumber=" + getLicenseNumber() +
                 ", ratingAverage=" + getRatingAverage() +
-                ", userId=" + getUserId() +
                 ", firstName='" + getFirstName() + '\'' +
                 ", lastName='" + getLastName() + '\'' +
                 ", createdAt=" + getCreatedAt() +
@@ -55,7 +55,7 @@ public class Driver extends User {
     }
 
     public static class Builder {
-        private Long licenseNumber;
+        private String licenseNumber;
         private int ratingAverage;
         private Long userId;
         private String firstName;
@@ -67,7 +67,7 @@ public class Driver extends User {
         private Authentication authentication;
         private Role role;
 
-        public Builder setLicenseNumber(Long licenseNumber) {
+        public Builder setLicenseNumber(String licenseNumber) {
             this.licenseNumber = licenseNumber;
             return this;
         }

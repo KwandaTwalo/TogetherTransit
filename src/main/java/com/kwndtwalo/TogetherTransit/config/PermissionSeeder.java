@@ -5,6 +5,7 @@ package com.kwndtwalo.TogetherTransit.config;
 * */
 
 import com.kwndtwalo.TogetherTransit.domain.users.PermissionLevel;
+import com.kwndtwalo.TogetherTransit.factory.users.PermissionLevelFactory;
 import com.kwndtwalo.TogetherTransit.repository.users.PermissionLevelRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
@@ -74,11 +75,11 @@ public class PermissionSeeder {
             return;
         }
 
-        PermissionLevel permission = new PermissionLevel.Builder()
-                .setPermissionType(type)
-                .setPermissionDescription(description)
-                .setAllowedActions(allowedActions)
-                .build();
+        PermissionLevel permission = PermissionLevelFactory.createPermissionLevel(
+                type,
+                description,
+                allowedActions
+        );
 
         permissionLevelRepository.save(permission);
     }

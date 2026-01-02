@@ -16,7 +16,7 @@ public class Booking {
     private Long bookingId;
 
     // Monthly subscription
-    private LocalDate bookingDate;        // When booking was made
+    private LocalDate bookingDate;        // When booking was made.
     private LocalDate contractStartDate;
     private LocalDate contractEndDate;
 
