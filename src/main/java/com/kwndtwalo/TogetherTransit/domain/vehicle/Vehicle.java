@@ -12,6 +12,7 @@ public class Vehicle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long vehicleId;
 
+    //@Column(unique = true, nullable = false)//Enable this when you are done testing the backend.
     private String plateNumber;
     private String vehicleName;      // Optional nickname e.g. “School Express”
     @Enumerated(EnumType.STRING)
@@ -27,6 +28,7 @@ public class Vehicle {
     private boolean roadworthyStatus;
     private LocalDate roadworthyExpiryDate;
 
+    //@Column(unique = true, nullable = false)//Enable this when you are done testing the backend.
     private String licenseDiskNumber;
     private LocalDate licenseExpiryDate;
 

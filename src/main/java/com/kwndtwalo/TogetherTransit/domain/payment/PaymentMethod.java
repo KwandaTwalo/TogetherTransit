@@ -28,7 +28,7 @@ public class PaymentMethod {
     private String brand;         // Visa, MasterCard
     private String lastFourDigits;// this is used to indicate the last 4 digits of the user card. For example "Visa ****1234". This helps user to know which card they are using.
 
-    private boolean is_active;       // Allows disabling a card
+    private boolean active;       // Allows disabling a card
 
     private LocalDateTime createdAt;
 
@@ -50,7 +50,7 @@ public class PaymentMethod {
         token = builder.token;
         brand = builder.brand;
         lastFourDigits = builder.lastFourDigits;
-        is_active = builder.is_active;
+        active = builder.active;
         createdAt = builder.createdAt;
     }
 
@@ -82,8 +82,8 @@ public class PaymentMethod {
         return lastFourDigits;
     }
 
-    public boolean getIs_active() {
-        return is_active;
+    public boolean getActive() {
+        return active;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -99,7 +99,7 @@ public class PaymentMethod {
                 ", token='" + getToken() + '\'' +
                 ", brand='" + getBrand() + '\'' +
                 ", lastFourDigits='" + getLastFourDigits() + '\'' +
-                ", is_active=" + getIs_active() +
+                ", active=" + getActive() +
                 ", createdAt=" + getCreatedAt() +
                 ", parent=" + getParent() +
                 '}';
@@ -113,7 +113,7 @@ public class PaymentMethod {
         private String token;
         private String brand;
         private String lastFourDigits;
-        private boolean is_active;
+        private boolean active;
         private LocalDateTime createdAt;
 
         public Builder setPaymentMethodId(Long paymentMethodId) {
@@ -144,8 +144,8 @@ public class PaymentMethod {
             this.lastFourDigits = lastFourDigits;
             return this;
         }
-        public Builder setIs_active(boolean is_active) {
-            this.is_active = is_active;
+        public Builder setActive(boolean active) {
+            this.active = active;
             return this;
         }
         public Builder setCreatedAt(LocalDateTime createdAt) {
@@ -161,7 +161,7 @@ public class PaymentMethod {
             this.token = paymentMethod.getToken();
             this.brand = paymentMethod.getBrand();
             this.lastFourDigits = paymentMethod.getLastFourDigits();
-            this.is_active = paymentMethod.getIs_active();
+            this.active = paymentMethod.getActive();
             this.createdAt = paymentMethod.getCreatedAt();
             return this;
         }

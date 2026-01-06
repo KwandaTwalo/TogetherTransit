@@ -10,47 +10,47 @@ public class School {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long SchoolId;
-    private String SchoolName;
+    private Long schoolId;
+    private String schoolName;
 
     protected School() {}
 
     private School(Builder builder) {
-        SchoolId = builder.SchoolId;
-        SchoolName = builder.SchoolName;
+        schoolId = builder.schoolId;
+        schoolName = builder.schoolName;
     }
 
     public Long getSchoolId() {
-        return SchoolId;
+        return schoolId;
     }
 
     public String getSchoolName() {
-        return SchoolName;
+        return schoolName;
     }
 
     @Override
     public String toString() {
         return "School{" +
-                "SchoolId=" + getSchoolId() +
-                ", SchoolName='" + getSchoolName() + '\'' +
+                "schoolId=" + getSchoolId() +
+                ", schoolName='" + getSchoolName() + '\'' +
                 '}';
     }
 
     public static class Builder {
-        private Long SchoolId;
-        private String SchoolName;
+        private Long schoolId;
+        private String schoolName;
 
         public Builder setSchoolId(Long SchoolId) {
-            this.SchoolId = SchoolId;
+            this.schoolId = SchoolId;
             return this;
         }
         public Builder setSchoolName(String SchoolName) {
-            this.SchoolName = SchoolName;
+            this.schoolName = SchoolName;
             return this;
         }
         public Builder copy(School school) {
-            SchoolId = school.getSchoolId();
-            SchoolName = school.getSchoolName();
+            schoolId = school.getSchoolId();
+            schoolName = school.getSchoolName();
             return this;
         }
 

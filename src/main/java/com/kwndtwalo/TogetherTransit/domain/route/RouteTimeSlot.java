@@ -2,7 +2,7 @@ package com.kwndtwalo.TogetherTransit.domain.route;
 
 /*This class defines specific time trips for that route.*/
 
-/* This table supports:
+/** This table supports:
 * Weekend classes.
 * Early morning classes.
 * Late classes.

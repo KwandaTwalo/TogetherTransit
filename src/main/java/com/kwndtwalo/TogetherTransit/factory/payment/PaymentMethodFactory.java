@@ -35,7 +35,7 @@ public class PaymentMethodFactory {
                 .setToken(token)
                 .setBrand(brand)
                 .setLastFourDigits(lastFourDigits)
-                .setIs_active(isActive)
+                .setActive(isActive)
                 .setCreatedAt(createdAt)
                 .setParent(parent)
                 .build();

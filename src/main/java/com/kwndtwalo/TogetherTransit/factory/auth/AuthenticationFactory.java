@@ -10,7 +10,7 @@ public class AuthenticationFactory {
     public static Authentication createAuthentication(String email,
                                                       String password,
                                                       LocalDateTime lastLogin,
-                                                      boolean is_locked) {
+                                                      boolean locked) {
 
         if (!Helper.isValidEmailAddress(email) ||
         !Helper.isValidPassword(password)) {
@@ -20,7 +20,7 @@ public class AuthenticationFactory {
                 .setEmailAddress(email)
                 .setPassword(password)
                 .setLastLogin(lastLogin)
-                .setIs_locked(is_locked)
+                .setLocked(locked)
                 .build();
     }
 }

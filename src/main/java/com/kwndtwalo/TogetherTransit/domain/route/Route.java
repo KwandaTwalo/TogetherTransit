@@ -1,5 +1,16 @@
 package com.kwndtwalo.TogetherTransit.domain.route;
 
+/**Route is the core transport unit that controls:
+ * Pickup & drop-off points
+ * Driver assignment
+ * School assignment
+ * Monthly pricing
+ * Service days (Mon–Sun)
+ * Status lifecycle
+ * Distance & duration estimates
+ * Scheduling (time slots & exam overrides)
+ * */
+
 import com.kwndtwalo.TogetherTransit.domain.school.School;
 import com.kwndtwalo.TogetherTransit.domain.users.Driver;
 import jakarta.persistence.*;

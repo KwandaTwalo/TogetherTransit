@@ -1,9 +1,6 @@
 package com.kwndtwalo.TogetherTransit.domain.auth;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
@@ -13,10 +10,14 @@ public class Authentication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long authenticationId;
+
+    //@Column(unique = true, nullable = false)//Enable this when you are done testing.
     private String emailAddress;
+
+    //@Column(unique = true)//Enable this when you are done testing.
     private String password;
     private LocalDateTime lastLogin;
-    private boolean is_locked; //This will be used when the user enter incorrect password more than 3 times.
+    private boolean locked; //This will be used when the user enter incorrect password more than 3 times.
 
     protected Authentication() {}
 
@@ -25,7 +26,7 @@ public class Authentication {
         this.emailAddress = builder.emailAddress;
         this.password = builder.password;
         this.lastLogin = builder.lastLogin;
-        this.is_locked = builder.is_locked;
+        this.locked = builder.locked;
     }
 
 
@@ -45,8 +46,8 @@ public class Authentication {
         return lastLogin;
     }
 
-    public boolean getIs_locked() {
-        return is_locked;
+    public boolean getLocked() {
+        return locked;
     }
 
     @Override
@@ -56,7 +57,7 @@ public class Authentication {
                 ", emailAddress='" + getEmailAddress() + '\'' +
                 ", password='" + getPassword() + '\'' +
                 ", lastLogin=" + getLastLogin() +
-                ", is_locked=" + getIs_locked() +
+                ", locked=" + getLocked() +
                 '}';
     }
 
@@ -65,7 +66,7 @@ public class Authentication {
         private String emailAddress;
         private String password;
         private LocalDateTime lastLogin;
-        private boolean is_locked;
+        private boolean locked;
 
         public Builder setAuthenticationId(Long authenticationId) {
             this.authenticationId = authenticationId;
@@ -83,8 +84,8 @@ public class Authentication {
             this.lastLogin = lastLogin;
             return this;
         }
-        public Builder setIs_locked(boolean is_locked) {
-            this.is_locked = is_locked;
+        public Builder setLocked(boolean locked) {
+            this.locked = locked;
             return this;
         }
         public Builder copy(Authentication authentication) {
@@ -92,7 +93,7 @@ public class Authentication {
             this.emailAddress = authentication.getEmailAddress();
             this.password = authentication.getPassword();
             this.lastLogin = authentication.getLastLogin();
-            this.is_locked = authentication.getIs_locked();
+            this.locked = authentication.getLocked();
             return this;
         }
 
