@@ -46,7 +46,7 @@ public class Admin extends User {
 
     @Override
     public String toString() {
-        return "Admin{" +
+        return "\nAdmin{" +
                 "lastLogin=" + getLastLogin() +
                 ", adminId=" + getUserId() +
                 ", firstName='" + getFirstName() + '\'' +
@@ -56,7 +56,7 @@ public class Admin extends User {
                 ", contact=" + getContact() +
                 ", address=" + getAddress() +
                 ", authentication=" + getAuthentication() +
-                ", role=" + getRole() +
+                ", roleId=" + (role != null ? role.getRoleId() : null) +
                 ", permissionLevel=" + getPermissionLevel() +
                 '}';
     }

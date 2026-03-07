@@ -97,7 +97,7 @@ public class Booking {
 
     @Override
     public String toString() {
-        return "Booking{" +
+        return "\nBooking{" +
                 "bookingId=" + getBookingId() +
                 ", bookingDate=" + getBookingDate() +
                 ", contractStartDate=" + getContractStartDate() +

@@ -110,7 +110,7 @@ public class Rating {
 
     @Override
     public String toString() {
-        return "Rating{" +
+        return "\nRating{" +
                 "ratingId=" + getRatingId() +
                 ", feedBackText='" + getFeedBackText() + '\'' +
                 ", ratedAt=" + getRatedAt() +

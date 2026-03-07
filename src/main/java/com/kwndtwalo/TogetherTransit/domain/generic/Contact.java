@@ -36,7 +36,7 @@ public class Contact {
 
     @Override
     public String toString() {
-        return "Contact{" +
+        return "\nContact{" +
                 "contactId=" + getContactId() +
                 ", phoneNumber='" + getPhoneNumber() + '\'' +
                 ", emergencyNumber='" + getEmergencyNumber() + '\'' +

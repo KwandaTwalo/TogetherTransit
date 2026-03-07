@@ -24,7 +24,6 @@ public class AdminFactory {
         return new Admin.Builder()
                 .setLastLogin(lastLogin)
                 .setFirstName(firstName)
-                .setFirstName(firstName)
                 .setLastName(lastName)
                 .setCreatedAt(createdAt)
                 .setAccountStatus(accountStatus)

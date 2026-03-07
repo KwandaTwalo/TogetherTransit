@@ -26,7 +26,7 @@ public class Parent extends User {
 
     @Override
     public String toString() {
-        return "Parent{" +
+        return "\nParent{" +
                 "parentId=" + getUserId() +
                 ", firstName='" + getFirstName() + '\'' +
                 ", lastName='" + getLastName() + '\'' +
@@ -35,7 +35,7 @@ public class Parent extends User {
                 ", contact=" + getContact() +
                 ", address=" + getAddress() +
                 ", authentication=" + getAuthentication() +
-                ", role=" + getRole() +
+                ", roleId=" + (role != null ? role.getRoleId() : null) +
                 '}';
     }
 

@@ -12,6 +12,7 @@ public class Vehicle {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long vehicleId;
 
+    //@Column(unique = true, nullable = false)//Enable this when you are done testing the backend.
     private String plateNumber;
     private String vehicleName;      // Optional nickname e.g. “School Express”
     @Enumerated(EnumType.STRING)
@@ -27,6 +28,7 @@ public class Vehicle {
     private boolean roadworthyStatus;
     private LocalDate roadworthyExpiryDate;
 
+    //@Column(unique = true, nullable = false)//Enable this when you are done testing the backend.
     private String licenseDiskNumber;
     private LocalDate licenseExpiryDate;
 
@@ -128,7 +130,7 @@ public class Vehicle {
 
     @Override
     public String toString() {
-        return "Vehicle{" +
+        return "\nVehicle{" +
                 "vehicleId=" + getVehicleId() +
                 ", plateNumber='" + getPlateNumber() + '\'' +
                 ", vehicleName='" + getVehicleName() + '\'' +
@@ -143,7 +145,8 @@ public class Vehicle {
                 ", licenseExpiryDate=" + getLicenseExpiryDate() +
                 ", insuranceProvider='" + getInsuranceProvider() + '\'' +
                 ", insuranceExpiryDate=" + getInsuranceExpiryDate() +
-                ", driver=" + getDriver() +
+                ", driver=" + getDriver().getUserId() +// I am printing only the ID because the relationship between
+                // Driver and Vehicle is Lazy. Meaning if you print the whole driver info it can't because it will tell you that there is no session.
                 '}';
     }
 

@@ -89,7 +89,7 @@ public class ExamSession {
 
     @Override
     public String toString() {
-        return "ExamSession{" +
+        return "\nExamSession{" +
                 "examSessionId=" + getExamSessionId() +
                 ", examDate=" + getExamDate() +
                 ", pickupTime=" + getPickupTime() +

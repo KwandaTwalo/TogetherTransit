@@ -1,5 +1,16 @@
 package com.kwndtwalo.TogetherTransit.domain.route;
 
+/**Route is the core transport unit that controls:
+ * Pickup & drop-off points
+ * Driver assignment
+ * School assignment
+ * Monthly pricing
+ * Service days (Mon–Sun)
+ * Status lifecycle
+ * Distance & duration estimates
+ * Scheduling (time slots & exam overrides)
+ * */
+
 import com.kwndtwalo.TogetherTransit.domain.school.School;
 import com.kwndtwalo.TogetherTransit.domain.users.Driver;
 import jakarta.persistence.*;
@@ -86,7 +97,6 @@ public class Route {
         this.serviceDays = builder.serviceDays;
         this.timeSlots = builder.timeSlots;
         this.examPeriods = builder.examPeriods;
-        this.status = builder.status;
         this.driver = builder.driver;
         this.school = builder.school;
         this.specialInstructions = builder.specialInstructions;
@@ -167,7 +177,7 @@ public class Route {
 
     @Override
     public String toString() {
-        return "Route{" +
+        return "\nRoute{" +
                 "routeId=" + getRouteId() +
                 ", pickupPoint='" + getPickupPoint() + '\'' +
                 ", dropoffPoint='" + getDropoffPoint() + '\'' +
@@ -183,8 +193,8 @@ public class Route {
                 ", timeSlots=" + getTimeSlots() +
                 ", examPeriods=" + getExamPeriods() +
                 ", status=" + getStatus() +
-                ", driver=" + getDriver() +
-                ", school=" + getSchool() +
+                ", driver=" + getDriver().getUserId() +
+                ", school=" + getSchool().getSchoolId() +
                 ", specialInstructions='" + getSpecialInstructions() + '\'' +
                 '}';
     }
