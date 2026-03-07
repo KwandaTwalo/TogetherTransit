@@ -106,7 +106,7 @@ public class Payment {
 
     @Override
     public String toString() {
-        return "Payment{" +
+        return "\nPayment{" +
                 "paymentId=" + getPaymentId() +
                 ", totalAmount=" + getTotalAmount() +
                 ", currencyType=" + getCurrencyType() +

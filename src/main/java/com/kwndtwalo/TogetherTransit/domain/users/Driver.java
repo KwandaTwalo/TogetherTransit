@@ -39,7 +39,7 @@ public class Driver extends User {
 
     @Override
     public String toString() {
-        return "Driver{" +
+        return "\nDriver{" +
                 "driverId=" + getUserId() +
                 ", licenseNumber=" + getLicenseNumber() +
                 ", ratingAverage=" + getRatingAverage() +
@@ -50,7 +50,7 @@ public class Driver extends User {
                 ", contact=" + getContact() +
                 ", address=" + getAddress() +
                 ", authentication=" + getAuthentication() +
-                ", role=" + getRole() +
+                ", roleId=" + (role != null ? role.getRoleId() : null) +
                 '}';
     }
 

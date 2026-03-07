@@ -52,7 +52,7 @@ public class Authentication {
 
     @Override
     public String toString() {
-        return "Authentication{" +
+        return "\nAuthentication{" +
                 "authenticationId=" + getAuthenticationId() +
                 ", emailAddress='" + getEmailAddress() + '\'' +
                 ", password='" + getPassword() + '\'' +

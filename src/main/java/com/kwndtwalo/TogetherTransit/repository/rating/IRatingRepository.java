@@ -29,7 +29,7 @@ public interface IRatingRepository extends JpaRepository<Rating, Long> {
     // DRIVER-FOCUSED QUERIES
     // -------------------------------
 
-    // All ratings for a driver
+    // All ratings for a driver.
     List<Rating> findByDriver(Driver driver);
 
     // Only approved ratings (what parents see)

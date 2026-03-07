@@ -40,7 +40,7 @@ public abstract class User {
     @JoinColumn(name = "authenticationId", referencedColumnName = "authenticationId")
     protected Authentication authentication;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "roleId", referencedColumnName = "roleId")
     protected Role role;
 

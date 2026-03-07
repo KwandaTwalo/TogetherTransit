@@ -15,10 +15,11 @@ public interface IContactRepository extends JpaRepository<Contact, Long> {
     // Find contact using main phone number
     Optional<Contact> findByPhoneNumber(String phoneNumber);
 
+    Optional<Contact> findByPhoneNumberAndEmergencyNumber(String phoneNumber, String emergencyNumber);
+
     // Prevent duplicate phone numbers
-    boolean existsByPhoneNumber(String phoneNumber);
+    boolean existsByPhoneNumberAndEmergencyNumber(String phoneNumber, String emergencyNumber);
 
     @Query("SELECT c FROM Contact c WHERE c.phoneNumber LIKE %:digits")
     List<Contact> searchByPartialPhone(@Param("digits") String digits);
-
 }

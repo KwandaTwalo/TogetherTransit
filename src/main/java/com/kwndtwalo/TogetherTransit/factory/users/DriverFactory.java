@@ -23,7 +23,6 @@ public class DriverFactory {
                 .setLicenseNumber(licenseNumber)
                 .setRatingAverage(ratingAverage)
                 .setFirstName(firstName)
-                .setFirstName(firstName)
                 .setLastName(lastName)
                 .setCreatedAt(createdAt)
                 .setAccountStatus(accountStatus)

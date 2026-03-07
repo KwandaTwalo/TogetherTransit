@@ -97,7 +97,6 @@ public class Route {
         this.serviceDays = builder.serviceDays;
         this.timeSlots = builder.timeSlots;
         this.examPeriods = builder.examPeriods;
-        this.status = builder.status;
         this.driver = builder.driver;
         this.school = builder.school;
         this.specialInstructions = builder.specialInstructions;
@@ -178,7 +177,7 @@ public class Route {
 
     @Override
     public String toString() {
-        return "Route{" +
+        return "\nRoute{" +
                 "routeId=" + getRouteId() +
                 ", pickupPoint='" + getPickupPoint() + '\'' +
                 ", dropoffPoint='" + getDropoffPoint() + '\'' +
@@ -194,8 +193,8 @@ public class Route {
                 ", timeSlots=" + getTimeSlots() +
                 ", examPeriods=" + getExamPeriods() +
                 ", status=" + getStatus() +
-                ", driver=" + getDriver() +
-                ", school=" + getSchool() +
+                ", driver=" + getDriver().getUserId() +
+                ", school=" + getSchool().getSchoolId() +
                 ", specialInstructions='" + getSpecialInstructions() + '\'' +
                 '}';
     }

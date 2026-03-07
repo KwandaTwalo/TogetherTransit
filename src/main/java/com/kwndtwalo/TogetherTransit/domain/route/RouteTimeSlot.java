@@ -73,7 +73,7 @@ public class RouteTimeSlot {
 
     @Override
     public String toString() {
-        return "RouteTimeSlot{" +
+        return "\nRouteTimeSlot{" +
                 "slotId=" + getSlotId() +
                 ", timeType=" + getTimeType() +
                 ", startTime=" + getStartTime() +

@@ -30,7 +30,7 @@ public class School {
 
     @Override
     public String toString() {
-        return "School{" +
+        return "\nSchool{" +
                 "schoolId=" + getSchoolId() +
                 ", schoolName='" + getSchoolName() + '\'' +
                 '}';

@@ -70,7 +70,7 @@ public class ExamPeriod {
 
     @Override
     public String toString() {
-        return "ExamPeriod{" +
+        return "\nExamPeriod{" +
                 "examPeriodId=" + getExamPeriodId() +
                 ", startDate=" + getStartDate() +
                 ", endDate=" + getEndDate() +

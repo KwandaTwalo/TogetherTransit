@@ -69,7 +69,7 @@ public class Child {
 
     @Override
     public String toString() {
-        return "Child{" +
+        return "\nChild{" +
                 "childId=" + getChildId() +
                 ", firstName='" + getFirstName() + '\'' +
                 ", lastName='" + getLastName() + '\'' +

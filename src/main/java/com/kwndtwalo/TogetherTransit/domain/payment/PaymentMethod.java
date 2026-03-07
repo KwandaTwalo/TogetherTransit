@@ -92,7 +92,7 @@ public class PaymentMethod {
 
     @Override
     public String toString() {
-        return "PaymentMethod{" +
+        return "\nPaymentMethod{" +
                 "paymentMethodId=" + getPaymentMethodId() +
                 ", methodType=" + getMethodType() +
                 ", provider='" + getProvider() + '\'' +
@@ -101,7 +101,7 @@ public class PaymentMethod {
                 ", lastFourDigits='" + getLastFourDigits() + '\'' +
                 ", active=" + getActive() +
                 ", createdAt=" + getCreatedAt() +
-                ", parent=" + getParent() +
+                ", parent=" + getParent().getUserId() +
                 '}';
     }
 

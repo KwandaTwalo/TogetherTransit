@@ -130,7 +130,7 @@ public class Vehicle {
 
     @Override
     public String toString() {
-        return "Vehicle{" +
+        return "\nVehicle{" +
                 "vehicleId=" + getVehicleId() +
                 ", plateNumber='" + getPlateNumber() + '\'' +
                 ", vehicleName='" + getVehicleName() + '\'' +
@@ -145,7 +145,8 @@ public class Vehicle {
                 ", licenseExpiryDate=" + getLicenseExpiryDate() +
                 ", insuranceProvider='" + getInsuranceProvider() + '\'' +
                 ", insuranceExpiryDate=" + getInsuranceExpiryDate() +
-                ", driver=" + getDriver() +
+                ", driver=" + getDriver().getUserId() +// I am printing only the ID because the relationship between
+                // Driver and Vehicle is Lazy. Meaning if you print the whole driver info it can't because it will tell you that there is no session.
                 '}';
     }
 

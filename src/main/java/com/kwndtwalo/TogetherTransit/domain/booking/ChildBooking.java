@@ -99,7 +99,7 @@ public class ChildBooking {
 
     @Override
     public String toString() {
-        return "ChildBooking{" +
+        return "\nChildBooking{" +
                 "childBookingId=" + getChildBookingId() +
                 ", usesCustomSchedule=" + getUsesCustomSchedule() +
                 ", booking=" + getBooking() +
