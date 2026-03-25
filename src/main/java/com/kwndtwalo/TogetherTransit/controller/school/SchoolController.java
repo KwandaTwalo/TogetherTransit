@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/school")
 public class SchoolController {
@@ -48,6 +50,11 @@ public class SchoolController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(updatedSchool);
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<List<School>> getAllSchools() {
+        return ResponseEntity.ok(schoolService.getAllSchools());
     }
 
     @DeleteMapping("/delete/{Id}")
