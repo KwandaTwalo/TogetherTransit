@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
 @Service
 public class ContactService implements IContactService {
 
@@ -35,8 +34,7 @@ public class ContactService implements IContactService {
         return contactRepository
                 .findByPhoneNumberAndEmergencyNumber(
                         contact.getPhoneNumber(),
-                        contact.getEmergencyNumber()
-                )
+                        contact.getEmergencyNumber())
                 .orElseGet(() -> contactRepository.save(contact));
     }
 
@@ -90,4 +88,3 @@ public class ContactService implements IContactService {
         return contactRepository.searchByPartialPhone(digits);
     }
 }
-
