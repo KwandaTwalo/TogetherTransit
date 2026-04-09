@@ -1,20 +1,31 @@
 package com.kwndtwalo.TogetherTransit.domain.generic;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
+@Table(name = "contact", uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "phoneNumber", "emergencyNumber" })
+})
 public class Contact {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long contactId;
+
+    @Column(nullable = false)
     private String phoneNumber;
+
+    @Column(nullable = false)
     private String emergencyNumber;
 
-    protected Contact() {}
+    protected Contact() {
+    }
 
     private Contact(Builder builder) {
         this.contactId = builder.contactId;
@@ -52,10 +63,12 @@ public class Contact {
             this.contactId = contactId;
             return this;
         }
+
         public Builder setPhoneNumber(String phoneNumber) {
             this.phoneNumber = phoneNumber;
             return this;
         }
+
         public Builder setEmergencyNumber(String emergencyNumber) {
             this.emergencyNumber = emergencyNumber;
             return this;
@@ -67,6 +80,9 @@ public class Contact {
             this.emergencyNumber = contact.getEmergencyNumber();
             return this;
         }
-        public Contact build() {return new Contact(this);}
+
+        public Contact build() {
+            return new Contact(this);
+        }
     }
 }

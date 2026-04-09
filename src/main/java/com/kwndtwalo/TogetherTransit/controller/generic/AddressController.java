@@ -2,9 +2,14 @@ package com.kwndtwalo.TogetherTransit.controller.generic;
 
 import com.kwndtwalo.TogetherTransit.domain.generic.Address;
 import com.kwndtwalo.TogetherTransit.dto.generic.AddressDTO;
+import com.kwndtwalo.TogetherTransit.factory.generic.AddressFactory;
 import com.kwndtwalo.TogetherTransit.service.generic.AddressService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,17 +29,28 @@ public class AddressController {
      * CREATE ADDRESS
      */
     @PostMapping("/create")
-    public ResponseEntity<AddressDTO> create(@RequestBody Address address) {
-
-        Address created = addressService.create(address);
-
-
-        if (created == null) {
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<?> create(@Valid @RequestBody AddressDTO addressDTO, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
         }
 
-        // Save address and return HTTP 200 (OK)
-        return ResponseEntity.ok().body(new AddressDTO(created));
+        Address address = AddressFactory.createAddress(
+                addressDTO.getStreetNumber(),
+                addressDTO.getStreetName(),
+                addressDTO.getSuburb(),
+                addressDTO.getCity(),
+                addressDTO.getPostalCode());
+
+        if (address == null) {
+            return ResponseEntity.badRequest().body("Invalid address data");
+        }
+
+        Address created = addressService.create(address);
+        if (created == null) {
+            return ResponseEntity.badRequest().body("Duplicate address exists");
+        }
+
+        return ResponseEntity.ok(created);
     }
 
     /*
@@ -59,13 +75,28 @@ public class AddressController {
      * This method updates an existing address.
      * It first validates data using the factory.
      */
-    @PutMapping("/update")
-    public ResponseEntity<Address> update(@RequestBody Address address) {
+    @PutMapping("/update/{Id}")
+    public ResponseEntity<?> update(@Valid @RequestBody AddressDTO addressDTO,
+            BindingResult result,
+            @PathVariable Long Id) {
 
-        Address updated = addressService.update(address);
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+
+        Address addressToUpdate = new Address.Builder()
+                .setAddressId(Id)
+                .setStreetNumber(addressDTO.getStreetNumber())
+                .setStreetName(addressDTO.getStreetName())
+                .setSuburb(addressDTO.getSuburb())
+                .setCity(addressDTO.getCity())
+                .setPostalCode(addressDTO.getPostalCode())
+                .build();
+
+        Address updated = addressService.update(addressToUpdate);
 
         if (updated == null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
 
         return ResponseEntity.ok(updated);
@@ -77,19 +108,20 @@ public class AddressController {
      * Returns true if deleted, false if not found.
      */
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Boolean> delete(@PathVariable Long id) {
-
+    public ResponseEntity<String> delete(@PathVariable Long id) {
         boolean deleted = addressService.delete(id);
-
-        return ResponseEntity.ok(deleted);
+        if (!deleted) {
+            return ResponseEntity.notFound().build(); // <-- 404 if not found
+        }
+        return ResponseEntity.ok("Address deleted successfully");
     }
 
     /*
      * GET ALL ADDRESSES
      * Returns all address records from database.
      */
-    @GetMapping("/getAll")
-    public ResponseEntity<List<Address>> getAll() {
+    @GetMapping("/getAllAddresses")
+    public ResponseEntity<List<Address>> getAllAddresses() {
         return ResponseEntity.ok(addressService.getAllAddresses());
     }
 
@@ -131,7 +163,6 @@ public class AddressController {
             @RequestParam String streetName) {
 
         return ResponseEntity.ok(
-                addressService.searchByStreet(streetNumber, streetName)
-        );
+                addressService.searchByStreet(streetNumber, streetName));
     }
 }
