@@ -17,67 +17,81 @@ public class PermissionLevelService implements IPermissionLevelService {
         this.permissionLevelRepository = permissionLevelRepository;
     }
 
+    // =========================================================
+    // BUSINESS RULE:
+    // Permission levels are seeded and system-controlled.
+    // Only SUPER_ADMIN should be able to create new ones.
+    // =========================================================
     @Override
     public PermissionLevel create(PermissionLevel permissionLevel) {
-        if (permissionLevel == null || permissionLevel.getPermissionType() == null) {
-            return null;
-        }
-
-        //Prevent duplicate permission types (SUPER_ADMIN, etc)
-        if (permissionLevelRepository
-                .findByPermissionType(permissionLevel.getPermissionType())
-                .isPresent()) {
-
-            return permissionLevelRepository
-                    .findByPermissionType(permissionLevel
-                            .getPermissionType())
-                    .orElse(null);
-        }
-
-        // Save only if it doesn't exist
-        return permissionLevelRepository.save(permissionLevel);
+        throw new UnsupportedOperationException(
+                "Permission levels are system-controlled. Creation restricted to SUPER_ADMIN or Seeder.");
     }
 
+    // =========================================================
+    // BUSINESS RULE:
+    // Read permission level safely by ID
+    // =========================================================
     @Override
-    public PermissionLevel read(Long Id) {
-        return permissionLevelRepository.findById(Id).orElse(null);
+    public PermissionLevel read(Long id) {
+        return permissionLevelRepository.findById(id).orElse(null);
     }
 
+    // =========================================================
+    // BUSINESS RULE:
+    // Update only description and allowedActions.
+    // PermissionType (enum) must never change.
+    // =========================================================
     @Override
     public PermissionLevel update(PermissionLevel permissionLevel) {
         if (permissionLevel == null || permissionLevel.getPermissionId() == null) {
             return null;
         }
 
-        if (!permissionLevelRepository.existsById(permissionLevel.getPermissionId())) {
+        PermissionLevel existing = permissionLevelRepository.findById(permissionLevel.getPermissionId())
+                .orElse(null);
+        if (existing == null) {
             return null;
         }
-        return permissionLevelRepository.save(permissionLevel);
+
+        //  Use Builder to preserve immutable fields (permissionType, id)
+        PermissionLevel updated = new PermissionLevel.Builder()
+                .copy(existing) // copy current state
+                .setPermissionDescription(permissionLevel.getPermissionDescription()) // update description
+                .setAllowedActions(permissionLevel.getAllowedActions()) // update allowed actions
+                .build();
+
+        return permissionLevelRepository.save(updated);
     }
 
+    // =========================================================
+    // BUSINESS RULE:
+    // Return all permission levels (for listing in DTO responses)
+    // =========================================================
     @Override
     public List<PermissionLevel> getAllPermissionLevels() {
         return permissionLevelRepository.findAll();
     }
 
+    // =========================================================
+    // BUSINESS RULE:
+    // Fetch by PermissionType (enum)
+    // =========================================================
     @Override
     public PermissionLevel getByPermissionLevelType(PermissionLevel.PermissionType permissionLevelType) {
-
         if (permissionLevelType == null) {
             return null;
         }
-
-        return permissionLevelRepository
-                .findByPermissionType(permissionLevelType)
-                .orElse(null);
+        return permissionLevelRepository.findByPermissionType(permissionLevelType).orElse(null);
     }
 
+    // =========================================================
+    // BUSINESS RULE:
+    // Prevent deletion of seeded permission levels.
+    // =========================================================
     @Override
-    public boolean delete(Long Id) {
-       if (!permissionLevelRepository.existsById(Id)) {
-           return false;
-       }
-       permissionLevelRepository.deleteById(Id);
-       return true;
+    public boolean delete(Long id) {
+        throw new UnsupportedOperationException(
+                "Permission levels cannot be deleted. Restricted to SUPER_ADMIN.");
     }
 }

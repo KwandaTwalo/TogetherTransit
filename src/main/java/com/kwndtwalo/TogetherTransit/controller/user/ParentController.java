@@ -1,10 +1,19 @@
 package com.kwndtwalo.TogetherTransit.controller.user;
 
+import com.kwndtwalo.TogetherTransit.domain.generic.Address;
+import com.kwndtwalo.TogetherTransit.domain.generic.Contact;
 import com.kwndtwalo.TogetherTransit.domain.users.Parent;
+import com.kwndtwalo.TogetherTransit.dto.generic.AddressDTO;
+import com.kwndtwalo.TogetherTransit.dto.generic.ContactDTO;
+import com.kwndtwalo.TogetherTransit.dto.users.DriverDTO;
 import com.kwndtwalo.TogetherTransit.dto.users.ParentDTO;
 import com.kwndtwalo.TogetherTransit.service.users.ParentService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,43 +30,40 @@ public class ParentController {
         this.parentService = parentService;
     }
 
-    /*
-     * CREATE
-     * -----------------------------------------
-     * Purpose:
-     * Creates a new parent account or returns existing one.
-     *
-     * Business Rules:
-     * - Prevents duplicate parents using:
-     *   firstName + lastName uniqueness check.
-     *
-     * Returns:
-     * - 200 OK → Parent successfully created or already exists
-     * - 400 Bad Request → Invalid input data
-     */
+    // =========================================
+    // CREATE DRIVER (FULL REGISTRATION FLOW)
+    // =========================================
     @PostMapping("/create")
-    public ResponseEntity<ParentDTO> createParent(@RequestBody Parent parent) {
-        Parent created = parentService.create(parent);
+    public ResponseEntity<?> createParent(@Valid @RequestBody ParentDTO dto,
+            BindingResult result) {
+        // 1. DTO validation
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+
+        Parent created = parentService.registerParent(
+                dto.getFirstName(),
+                dto.getLastName(),
+                null, // status ignored, service enforces ACTIVE
+                null, // Contact (can be added later)
+                null, // Address
+                null, // Authentication
+                null // Role (service should assign default PARENT role)
+
+        );
 
         if (created == null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("Failed to create parent. Possible duplicate or invalid data.");
         }
 
         return ResponseEntity.ok(new ParentDTO(created));
     }
 
-    /*
-     * READ BY ID
-     * -----------------------------------------
-     * Purpose:
-     * Retrieves a parent by their unique ID.
-     *
-     * Returns:
-     * - 200 OK → Parent found
-     * - 404 Not Found → Parent does not exist
-     */
+    // =========================================
+    // READ DRIVER
+    // =========================================
     @GetMapping("/read/{id}")
-    public ResponseEntity<ParentDTO> read(@PathVariable long id) {
+    public ResponseEntity<?> read(@PathVariable long id) {
         Parent parent = parentService.read(id);
 
         if (parent == null) {
@@ -67,22 +73,53 @@ public class ParentController {
         return ResponseEntity.ok(new ParentDTO(parent));
     }
 
-    /*
-     * UPDATE
-     * -----------------------------------------
-     * Purpose:
-     * Updates an existing parent profile.
-     *
-     * Business Rules:
-     * - Parent must already exist.
-     *
-     * Returns:
-     * - 200 OK → Parent successfully updated
-     * - 404 Not Found → Parent does not exist
-     */
-    @PutMapping("/update")
-    public ResponseEntity<ParentDTO> update(@RequestBody Parent parent) {
-        Parent updated = parentService.update(parent);
+    // =========================================
+    // UPDATE DRIVER
+    // =========================================
+    @PutMapping("/update/{Id}")
+    public ResponseEntity<?> update(@Valid @RequestBody ParentDTO dto,
+            @PathVariable long Id, BindingResult result) {
+
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+
+        Address address = null; // You can add logic to convert DTO address fields to an Address object
+        Contact contact = null; // Similarly, convert DTO contact fields to a Contact object
+
+        // CONVERT ADDRESS DTO → ENTITY
+        if (dto.getAddress() != null) {
+            address = new Address.Builder()
+                    .setStreetNumber(dto.getAddress().getStreetNumber())
+                    .setStreetName(dto.getAddress().getStreetName())
+                    .setSuburb(dto.getAddress().getSuburb())
+                    .setCity(dto.getAddress().getCity())
+                    .setPostalCode(dto.getAddress().getPostalCode())
+                    .build();
+        }
+
+        // CONVERT CONTACT DTO → ENTITY
+        if (dto.getContact() != null) {
+            contact = new Contact.Builder()
+                    .setPhoneNumber(dto.getContact().getPhoneNumber())
+                    .setEmergencyNumber(dto.getContact().getEmergencyNumber())
+                    .build();
+        }
+
+        Parent updateParent = new Parent.Builder()
+                .setUserId(Id)
+                .setFirstName(dto.getFirstName())
+                .setLastName(dto.getLastName())
+                // .setAccountStatus(dto.getAccountStatus()) // You can add logic to convert DTO
+                // status to AccountStatus enum
+                .setContact(contact)
+                .setAddress(address)
+                // .setAuthentication(...) // Add logic if you want to update authentication
+                // details
+                // .setRole(...) // Add logic if you want to update role
+                .build();
+
+        Parent updated = parentService.update(updateParent);
 
         if (updated == null) {
             return ResponseEntity.notFound().build();
@@ -91,16 +128,9 @@ public class ParentController {
         return ResponseEntity.ok(new ParentDTO(updated));
     }
 
-    /*
-     * GET ALL PARENTS
-     * -----------------------------------------
-     * Purpose:
-     * Fetches all registered parents.
-     *
-     * Returns:
-     * - 200 OK → List of parents
-     * - 204 No Content → No parents found
-     */
+    // =========================================
+    // GET ALL
+    // =========================================
     @GetMapping("/getAllParents")
     public ResponseEntity<List<ParentDTO>> getAllParents() {
 
@@ -117,21 +147,11 @@ public class ParentController {
         return ResponseEntity.ok(parentDTOS);
     }
 
-    /*
-     * DELETE
-     * -----------------------------------------
-     * Purpose:
-     * Deletes a parent account using ID.
-     *
-     * Business Rules:
-     * - Only deletes if record exists.
-     *
-     * Returns:
-     * - 200 OK → Deleted successfully
-     * - 404 Not Found → Parent does not exist
-     */
+    // =========================================
+    // DELETE
+    // =========================================
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> delete(@PathVariable long id) {
+    public ResponseEntity<?> delete(@PathVariable long id) {
 
         boolean deleted = parentService.delete(id);
 
@@ -139,6 +159,82 @@ public class ParentController {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Parent deleted successfully");
+    }
+
+    @PutMapping("/{id}/address")
+    public ResponseEntity<?> attachAddress(
+            @PathVariable Long id,
+            @RequestBody AddressDTO dto) {
+
+        Parent parent = parentService.read(id);
+
+        if (parent == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Address address = new Address.Builder()
+                .setStreetNumber(dto.getStreetNumber())
+                .setStreetName(dto.getStreetName())
+                .setSuburb(dto.getSuburb())
+                .setCity(dto.getCity())
+                .setPostalCode(dto.getPostalCode())
+                .build();
+
+        Parent updated = parentService.attachRelations(
+                parent,
+                parent.getContact(),
+                address,
+                parent.getAuthentication(),
+                parent.getRole());
+
+        return ResponseEntity.ok(new ParentDTO(updated));
+    }
+
+    @PutMapping("/{id}/contact")
+    public ResponseEntity<?> attachContact(
+            @PathVariable Long id,
+            @Valid @RequestBody ContactDTO dto,
+            BindingResult result) {
+
+        // =========================================
+        // 1. VALIDATE INPUT (DTO LEVEL)
+        // =========================================
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+
+        // =========================================
+        // 2. FIND EXISTING PARENT
+        // =========================================
+        Parent parent = parentService.read(id);
+
+        if (parent == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // =========================================
+        // 3. CONVERT DTO → ENTITY
+        // =========================================
+        Contact contact = new Contact.Builder()
+                .setPhoneNumber(dto.getPhoneNumber())
+                .setEmergencyNumber(dto.getEmergencyNumber())
+                .build();
+
+        // =========================================
+        // 4. ATTACH USING SERVICE LAYER
+        // (IMPORTANT: DO NOT BUILD PARENT HERE)
+        // =========================================
+        Parent updated = parentService.attachRelations(
+                parent,
+                contact,
+                parent.getAddress(),
+                parent.getAuthentication(),
+                parent.getRole());
+
+        // =========================================
+        // 5. RETURN RESPONSE
+        // =========================================
+        return ResponseEntity.ok(new ParentDTO(updated));
     }
 }

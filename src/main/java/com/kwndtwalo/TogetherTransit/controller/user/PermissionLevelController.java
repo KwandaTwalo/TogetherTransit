@@ -2,6 +2,7 @@ package com.kwndtwalo.TogetherTransit.controller.user;
 
 import com.kwndtwalo.TogetherTransit.domain.users.PermissionLevel;
 import com.kwndtwalo.TogetherTransit.dto.users.PermissionLevelDTO;
+import com.kwndtwalo.TogetherTransit.dto.users.PermissionLevelUpdateDTO;
 import com.kwndtwalo.TogetherTransit.service.users.PermissionLevelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,137 +22,112 @@ public class PermissionLevelController {
         this.permissionLevelService = permissionLevelService;
     }
 
-    /*
-     * CREATE Permission Level
-     * ------------------------
-     * Normally:
-     *   This would not be exposed publicly because permission levels are
-     *   seeded automatically at startup using PermissionSeeder.
-     *
-     * Why still keep this method?
-     * - For testing
-     * - For admin-only management endpoints
-     *
-     * This endpoint:
-     * - Accepts a PermissionLevel entity
-     * - Calls service.create()
-     * - Returns a DTO response
-     */
+    // =========================================================
+    // CREATE Permission Level
+    // - Normally restricted (seeded at startup)
+    // - Kept here for testing or SUPER_ADMIN only
+    // =========================================================
     @PostMapping("/create")
     public ResponseEntity<PermissionLevelDTO> create(@RequestBody PermissionLevel permissionLevel) {
-
-        PermissionLevel created = permissionLevelService.create(permissionLevel);
-
-        if (created == null) {
-            return ResponseEntity.badRequest().build();
+        try {
+            PermissionLevel created = permissionLevelService.create(permissionLevel);
+            if (created == null) {
+                return ResponseEntity.badRequest().build();
+            }
+            return ResponseEntity.ok(new PermissionLevelDTO(created));
+        } catch (UnsupportedOperationException e) {
+            return ResponseEntity.status(403).build(); // forbidden
         }
-
-        return ResponseEntity.ok(new PermissionLevelDTO(created));
     }
 
-    /*
-     * READ Permission Level BY ID
-     * ----------------------------
-     * Used to:
-     * - Fetch one permission level by its database ID.
-     */
+    // =========================================================
+    // READ Permission Level BY ID
+    // =========================================================
     @GetMapping("/read/{id}")
     public ResponseEntity<PermissionLevelDTO> read(@PathVariable Long id) {
-
         PermissionLevel permission = permissionLevelService.read(id);
-
         if (permission == null) {
             return ResponseEntity.notFound().build();
         }
-
         return ResponseEntity.ok(new PermissionLevelDTO(permission));
     }
 
-    /*
-     * GET ALL Permission Levels
-     * --------------------------
-     * Used when:
-     * - Admin UI needs to list all permission levels
-     * - System needs to display or assign permission levels
-     */
-    @GetMapping("/getAll")
+    // =========================================================
+    // GET ALL Permission Levels
+    // =========================================================
+    @GetMapping("/getAllPermissionLevels")
     public ResponseEntity<List<PermissionLevelDTO>> getAll() {
-
         List<PermissionLevelDTO> dtoList = permissionLevelService
                 .getAllPermissionLevels()
                 .stream()
                 .map(PermissionLevelDTO::new)
                 .collect(Collectors.toList());
 
+        if (dtoList.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok(dtoList);
     }
 
-    /*
-     * GET Permission Level BY TYPE
-     * ------------------------------
-     * Used when:
-     * - You want to fetch permission based on business meaning
-     *   instead of database ID.
-     *
-     * Example:
-     * GET /api/permission-levels/type/SUPER_ADMIN
-     */
+    // =========================================================
+    // GET Permission Level BY TYPE
+    // =========================================================
     @GetMapping("/type/{type}")
     public ResponseEntity<PermissionLevelDTO> getByType(
             @PathVariable PermissionLevel.PermissionType type) {
 
-        PermissionLevel permission =
-                permissionLevelService.getByPermissionLevelType(type);
-
+        PermissionLevel permission = permissionLevelService.getByPermissionLevelType(type);
         if (permission == null) {
             return ResponseEntity.notFound().build();
         }
-
         return ResponseEntity.ok(new PermissionLevelDTO(permission));
     }
 
-    /*
-     * UPDATE Permission Level
-     * ------------------------
-     * Used to:
-     * - Modify description or allowed actions
-     *
-     * Important:
-     * - The permission ID MUST already exist.
-     */
-    @PutMapping("/update")
+    // =========================================================
+    // UPDATE Permission Level
+    // - Accepts PermissionLevelUpdateDTO
+    // - Only description and allowed actions can change
+    // =========================================================
+    @PutMapping("/update/{id}")
     public ResponseEntity<PermissionLevelDTO> update(
-            @RequestBody PermissionLevel permissionLevel) {
+            @PathVariable Long id,
+            @RequestBody PermissionLevelUpdateDTO dto) {
 
-        PermissionLevel updated =
-                permissionLevelService.update(permissionLevel);
-
-        if (updated == null) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        return ResponseEntity.ok(new PermissionLevelDTO(updated));
-    }
-
-    /*
-     * DELETE Permission Level
-     * ------------------------
-     * Usually:
-     * - This endpoint should be VERY restricted.
-     * - Permission levels are core system data.
-     *
-     * Example:
-     * DELETE /api/permission-levels/delete/3
-     */
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> delete(@PathVariable Long id) {
-
-        boolean deleted = permissionLevelService.delete(id);
-
-        if (!deleted) {
+        PermissionLevel existing = permissionLevelService.read(id);
+        if (existing == null) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok("Permission level deleted successfully");
+        // Build updated entity using Builder pattern
+        PermissionLevel updatedEntity = new PermissionLevel.Builder()
+                .copy(existing)
+                .setPermissionDescription(dto.getPermissionDescription())
+                .setAllowedActions(
+                        dto.getAllowedActions() != null ? dto.getAllowedActions() : existing.getAllowedActions())
+//If allowedActions is null in the DTO, we keep the existing allowed actions unchanged. Otherwise, we update it with the new set provided in the DTO.
+                .build();
+
+        PermissionLevel updated = permissionLevelService.update(updatedEntity);
+        if (updated == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(new PermissionLevelDTO(updated));
+    }
+
+    // =========================================================
+    // DELETE Permission Level
+    // - Normally restricted (seeded data)
+    // =========================================================
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+        try {
+            boolean deleted = permissionLevelService.delete(id);
+            if (!deleted) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok("Permission level deleted successfully");
+        } catch (UnsupportedOperationException e) {
+            return ResponseEntity.status(403).body("Deletion restricted to SUPER_ADMIN");
+        }
     }
 }

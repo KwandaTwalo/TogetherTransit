@@ -11,4 +11,6 @@ public interface IDriverRepository extends JpaRepository<Driver, Long> {
 
     Optional<Driver> findByFirstNameAndLastName(String firstName, String lastName);
 
+    Optional<Driver> findByLicenseNumber(String licenseNumber);
+
 }
