@@ -35,4 +35,19 @@ public class AdminFactory {
                 .build();
     }
 
+    public static Admin createAdmin(LocalDateTime lastLogin, String firstName, String lastName, LocalDate createdAt,
+                                    User.AccountStatus accountStatus) {
+        if (!Helper.isValidString(firstName) || !Helper.isValidString(lastName)) {
+            return null;
+        }
+
+        return new Admin.Builder()
+                .setLastLogin(lastLogin)
+                .setFirstName(firstName)
+                .setLastName(lastName)
+                .setCreatedAt(createdAt)
+                .setAccountStatus(accountStatus)
+                .build();
+
+}
 }

@@ -12,9 +12,10 @@ import java.time.LocalDate;
 
 public class DriverFactory {
 
-    public static Driver createDriver(String licenseNumber, int ratingAverage, String firstName, String lastName, LocalDate createdAt,
-                                      User.AccountStatus accountStatus, Contact contact, Address address,
-                                      Authentication authentication, Role role) {
+    public static Driver createDriver(String licenseNumber, int ratingAverage, String firstName, String lastName,
+            LocalDate createdAt,
+            User.AccountStatus accountStatus, Contact contact, Address address,
+            Authentication authentication, Role role) {
         if (!Helper.isValidString(firstName) || !Helper.isValidString(lastName)
                 || !Helper.isValidLicenseNumber(licenseNumber)) {
             return null;
@@ -31,5 +32,23 @@ public class DriverFactory {
                 .setAuthentication(authentication)
                 .setRole(role)
                 .build();
+    }
+
+    public static Driver createDriver(String licenseNumber, int ratingAverage, String firstName, String lastName,
+            LocalDate createdAt,
+            User.AccountStatus accountStatus) {
+        if (!Helper.isValidString(firstName) || !Helper.isValidString(lastName)
+                || !Helper.isValidLicenseNumber(licenseNumber)) {
+            return null;
+        }
+        return new Driver.Builder()
+                .setLicenseNumber(licenseNumber)
+                .setRatingAverage(ratingAverage)
+                .setFirstName(firstName)
+                .setLastName(lastName)
+                .setCreatedAt(createdAt)
+                .setAccountStatus(accountStatus)
+                .build();
+
     }
 }

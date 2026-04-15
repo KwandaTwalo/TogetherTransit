@@ -7,7 +7,7 @@ import java.util.Set;
 
 public class Helper {
 
-    //It returns true if the phone meet the requirements.
+    // It returns true if the phone meet the requirements.
     public static boolean isValidPhoneNumber(String phoneNumber) {
         if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
             return false;
@@ -21,24 +21,27 @@ public class Helper {
             phoneNumber = "+27" + phoneNumber.substring(1);
         }
 
-    /**
-     Regex explanation:
-     - Must start with +27
-     - Mobile numbers: 6, 7, or 8 followed by 8 digits
-     - Landlines: 1–5 followed by 8 digits
-     - Total digits after +27 = 9
-    */
+        /**
+         * Regex explanation:
+         * - Must start with +27
+         * - Mobile numbers: 6, 7, or 8 followed by 8 digits
+         * - Landlines: 1–5 followed by 8 digits
+         * - Total digits after +27 = 9
+         */
         String regex = "^\\+27([6-8][0-9]{8}|[1-5][0-9]{8})$";
 
         return phoneNumber.matches(regex);
     }
 
+    // Returns true if the string is not empty.
+    public static boolean isValidString(String str) {
+        return str != null && !str.trim().isEmpty();
+    }
 
-    //Returns true if the string is not empty.
-    public static boolean isValidString(String str) {return str != null && !str.trim().isEmpty();}
-
-    //Returns true if the postal code meets the requirements.
-    public static boolean isValidPostalCode(int postalCode) {return postalCode >= 0 && postalCode <= 9999;}
+    // Returns true if the postal code meets the requirements.
+    public static boolean isValidPostalCode(int postalCode) {
+        return postalCode >= 0 && postalCode <= 9999;
+    }
 
     /**
      * This checks format only (not whether the email exists)
@@ -54,13 +57,13 @@ public class Helper {
         // Normalize input
         emailAddress = emailAddress.trim().toLowerCase();
 
-    /*
-     Regex explanation:
-     - Local part: letters, digits, dots, underscores, +, -, *
-     - @ symbol
-     - Domain name with one or more dots
-     - TLD: minimum 2 characters, no hard upper limit
-    */
+        /*
+         * Regex explanation:
+         * - Local part: letters, digits, dots, underscores, +, -, *
+         * - @ symbol
+         * - Domain name with one or more dots
+         * - TLD: minimum 2 characters, no hard upper limit
+         */
         String regex = "^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$";
 
         return emailAddress.matches(regex);
@@ -75,7 +78,7 @@ public class Helper {
      * - At least 1 digit
      * - At least 1 special character
      * - No spaces
-
+     * 
      * NOTE:
      * - This checks strength only
      */
@@ -90,25 +93,27 @@ public class Helper {
         if (password.contains(" ")) {
             return false;
         }
-    /*
-     Regex explanation:
-     (?=.*[a-z])      → at least one lowercase letter
-     (?=.*[A-Z])      → at least one uppercase letter
-     (?=.*\\d)        → at least one digit
-     (?=.*[@$!%*?&])  → at least one special character
-     .{8,}            → minimum 8 characters
-    */
+        /*
+         * Regex explanation:
+         * (?=.*[a-z]) → at least one lowercase letter
+         * (?=.*[A-Z]) → at least one uppercase letter
+         * (?=.*\\d) → at least one digit
+         * (?=.*[@$!%*?&]) → at least one special character
+         * .{8,} → minimum 8 characters
+         */
         String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&]).{8,}$";
 
         return password.matches(regex);
     }
 
     public static boolean isValidScore(int score) {
-        return score >= 1 && score <=5;
+        return score >= 1 && score <= 5;
     }
 
-    public static boolean isValidFeedback (String feedback) {
-        if (feedback == null || feedback.trim().isEmpty()) {return true; /*note it is not mandatory to add feedback*/}
+    public static boolean isValidFeedback(String feedback) {
+        if (feedback == null || feedback.trim().isEmpty()) {
+            return true;
+            /* note it is not mandatory to add feedback */}
 
         int length = feedback.trim().length();
         return length >= 5 && length <= 500;
@@ -116,7 +121,9 @@ public class Helper {
 
     public static boolean isValidDateOfBirth(LocalDate dateOfBirth) {
 
-        if (dateOfBirth == null) {return false; }
+        if (dateOfBirth == null) {
+            return false;
+        }
 
         LocalDate today = LocalDate.now();
         int age = Period.between(dateOfBirth, today).getYears();
@@ -162,34 +169,34 @@ public class Helper {
         // Remove spaces just in case user entered "1234 5678"
         licenseNumber = licenseNumber.replaceAll("\\s", "");
 
-    /*
-     Regex explanation:
-     ^[0-9]{8,12}$
-     - Only digits
-     - Minimum 8 digits
-     - Maximum 12 digits
-    */
+        /*
+         * Regex explanation:
+         * ^[0-9]{8,12}$
+         * - Only digits
+         * - Minimum 8 digits
+         * - Maximum 12 digits
+         */
         String regex = "^[0-9]{8,12}$";
 
         return licenseNumber.matches(regex);
     }
 
-    //Description must be readable and meaningful.
+    // Description must be readable and meaningful.
     public static boolean isValidPermissionDescription(String permissionDescription) {
         return permissionDescription != null
-        && !permissionDescription.trim().isEmpty()
-        && permissionDescription.length() >= 10
-        && permissionDescription.length() <= 255;
+                && !permissionDescription.trim().isEmpty()
+                && permissionDescription.length() >= 10
+                && permissionDescription.length() <= 255;
     }
 
-    //validates the entire action set.
+    // validates the entire action set.
     public static boolean isValidActionSet(Set<String> actions) {
         if (actions == null || actions.isEmpty()) {
             return false;
         }
 
         for (String action : actions) {
-            if (!isValidAction(action)){
+            if (!isValidAction(action)) {
                 return false;
             }
         }
@@ -203,11 +210,11 @@ public class Helper {
         }
 
         /*
-         Action format rules:
-         - UPPERCASE letters
-         - Underscores allowed
-         - No spaces
-         - Example: VIEW_PAYMENTS
+         * Action format rules:
+         * - UPPERCASE letters
+         * - Underscores allowed
+         * - No spaces
+         * - Example: VIEW_PAYMENTS
          */
 
         return action.matches("^[A-Z_]{3,50}$");
@@ -218,11 +225,18 @@ public class Helper {
         return type != null;
     }
 
-
-
-    /*==============================================================================================================*/
-    /**----------------------------------VEHICLE VALIDATION METHODS------------------------------------------------**/
-    /*==============================================================================================================*/
+    /*
+     * =============================================================================
+     * =================================
+     */
+    /**
+     * ----------------------------------VEHICLE VALIDATION
+     * METHODS------------------------------------------------
+     **/
+    /*
+     * =============================================================================
+     * =================================
+     */
 
     public static boolean isValidPlateNumber(String plateNumber) {
 
@@ -235,10 +249,10 @@ public class Helper {
         plateNumber = plateNumber.replaceAll("[\\s-]", "").toUpperCase();
 
         /*
-         Regex explanation:
-         ^[A-Z]{2}        → Province code (CA, GP, ND, etc.)
-         [0-9]{3,6}       → Registration digits
-         ([A-Z]{0,3})$    → Optional trailing letters
+         * Regex explanation:
+         * ^[A-Z]{2} → Province code (CA, GP, ND, etc.)
+         * [0-9]{3,6} → Registration digits
+         * ([A-Z]{0,3})$ → Optional trailing letters
          */
         String regex = "^[A-Z]{2}[0-9]{3,6}[A-Z]{0,3}$";
 
@@ -249,7 +263,7 @@ public class Helper {
      * Validates capacity of vehicle.
      */
     public static boolean isValidVehicleCapacity(int vehicleCapacity) {
-        //Capacity must always be positive.
+        // Capacity must always be positive.
         return vehicleCapacity > 0;
     }
 
@@ -295,10 +309,10 @@ public class Helper {
         }
 
         /*
-         Regex explanation:
-         ^[0-9]{8,12}$
-         - License disk numbers are numeric
-         - Typically 8–12 digits
+         * Regex explanation:
+         * ^[0-9]{8,12}$
+         * - License disk numbers are numeric
+         * - Typically 8–12 digits
          */
         if (!diskNumber.matches("^[0-9]{8,12}$")) {
             return false;
@@ -319,9 +333,9 @@ public class Helper {
         }
 
         /*
-         Provider name rules:
-         - Letters, spaces and hyphens
-         - Example: OUT-insurance, Discovery Insure
+         * Provider name rules:
+         * - Letters, spaces and hyphens
+         * - Example: OUT-insurance, Discovery Insure
          */
         if (!provider.matches("^[A-Za-z\\- ]{2,50}$")) {
             return false;
@@ -331,12 +345,18 @@ public class Helper {
         return expiryDate != null && !expiryDate.isBefore(LocalDate.now());
     }
 
-
-
-
-    /*==============================================================================================================*/
-    /**----------------------------------PAYMENT VALIDATION METHODS------------------------------------------------**/
-    /*==============================================================================================================*/
+    /*
+     * =============================================================================
+     * =================================
+     */
+    /**
+     * ----------------------------------PAYMENT VALIDATION
+     * METHODS------------------------------------------------
+     **/
+    /*
+     * =============================================================================
+     * =================================
+     */
 
     /*
      * Prevents free or negative payments.
@@ -371,7 +391,8 @@ public class Helper {
      */
     public static boolean isValidFailureReason(String reason, Enum<?> status) {
 
-        if (status == null) return false;
+        if (status == null)
+            return false;
 
         if (status.name().equals("FAILED")) {
             return reason != null && !reason.trim().isEmpty()
@@ -389,36 +410,48 @@ public class Helper {
             return false;
         }
 
-    /*
-     Allowed brands
-     */
+        /*
+         * Allowed brands
+         */
         return brand.equalsIgnoreCase("Visa")
                 || brand.equalsIgnoreCase("MasterCard")
                 || brand.equalsIgnoreCase("American Express");
     }
 
-    //  Validates last 4 digits of card.
+    // Validates last 4 digits of card.
     public static boolean isValidLastFourDigits(String digits) {
-        if (digits == null || digits.trim().isEmpty()) {return false;}
+        if (digits == null || digits.trim().isEmpty()) {
+            return false;
+        }
 
         /*
-     Rules:
-     - Exactly 4 digits
-     */
+         * Rules:
+         * - Exactly 4 digits
+         */
         return digits.matches("^[0-9]{4}$");
     }
 
     // Validates created date.
     public static boolean isValidCreatedAt(LocalDateTime createdAt) {
-        if (createdAt == null) return false;
+        if (createdAt == null)
+            return false;
 
         // Cannot be in the future.
         return !createdAt.isAfter(LocalDateTime.now());
     }
 
-    /*==============================================================================================================*/
-    /**----------------------------------BOOKING VALIDATION METHODS------------------------------------------------**/
-    /*==============================================================================================================*/
+    /*
+     * =============================================================================
+     * =================================
+     */
+    /**
+     * ----------------------------------BOOKING VALIDATION
+     * METHODS------------------------------------------------
+     **/
+    /*
+     * =============================================================================
+     * =================================
+     */
 
     public static boolean isValidBookingDate(LocalDate bookingDate) {
         // Cannot be in the future.
@@ -436,9 +469,9 @@ public class Helper {
      *
      * Business rules:
      * - If usesCustomSchedule = true:
-     *      → customDays MUST exist and must NOT be empty
+     * → customDays MUST exist and must NOT be empty
      * - If usesCustomSchedule = false:
-     *      → customDays MUST be empty or null
+     * → customDays MUST be empty or null
      */
     public static boolean isValidCustomSchedule(boolean usesCustomSchedule, Set<?> days) {
 
@@ -455,10 +488,18 @@ public class Helper {
         return days == null || days.isEmpty();
     }
 
-
-    /*==============================================================================================================*/
-    /**----------------------------------ROUTE VALIDATION METHODS------------------------------------------------**/
-    /*==============================================================================================================*/
+    /*
+     * =============================================================================
+     * =================================
+     */
+    /**
+     * ----------------------------------ROUTE VALIDATION
+     * METHODS------------------------------------------------
+     **/
+    /*
+     * =============================================================================
+     * =================================
+     */
 
     /**
      * Validates monthly contract logic.
@@ -475,7 +516,7 @@ public class Helper {
 
     /**
      * Validates GPS coordinates.
-     * Latitude:  -90 to 90
+     * Latitude: -90 to 90
      * Longitude: -180 to 180
      */
     public static boolean isValidCoordinates(Double latitude, Double longitude) {
@@ -550,8 +591,7 @@ public class Helper {
     public static boolean isExamDateWithinPeriod(
             LocalDate examDate,
             LocalDate startDate,
-            LocalDate endDate
-    ) {
+            LocalDate endDate) {
         // All dates must exist
         if (examDate == null || startDate == null || endDate == null) {
             return false;
@@ -577,8 +617,7 @@ public class Helper {
     public static boolean isValidTimeTypeRange(
             RouteTimeSlot.TimeType timeType,
             LocalTime startTime,
-            LocalTime endTime
-    ) {
+            LocalTime endTime) {
 
         // CUSTOM allows any valid time range
         if (timeType == RouteTimeSlot.TimeType.CUSTOM) {
