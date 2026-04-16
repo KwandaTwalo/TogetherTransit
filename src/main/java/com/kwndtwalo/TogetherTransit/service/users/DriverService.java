@@ -83,11 +83,12 @@ public class DriverService implements IDriverService {
                 .setLastName(updatedDriver.getLastName())
                 .setLicenseNumber(updatedDriver.getLicenseNumber())
                 .setRatingAverage(updatedDriver.getRatingAverage())
-                //.setAccountStatus(updatedDriver.getAccountStatus())
+                // .setAccountStatus(updatedDriver.getAccountStatus())
                 .setContact(updatedDriver.getContact())
                 .setAddress(updatedDriver.getAddress())
                 .setAuthentication(updatedDriver.getAuthentication())
-                .setRole(existing.getRole()) //Preserving the existing role unless explicitly changed (you can add logic to change it if needed)
+                .setRole(existing.getRole()) // Preserving the existing role unless explicitly changed (you can add
+                                             // logic to change it if needed)
                 .build();
 
         return driverRepository.save(merged);
@@ -187,5 +188,9 @@ public class DriverService implements IDriverService {
                 enforcedRole);
 
         return driverRepository.save(enriched);
+    }
+
+    public Driver findByEmail(String email) {
+        return driverRepository.findByAuthenticationEmailAddress(email).orElse(null);
     }
 }

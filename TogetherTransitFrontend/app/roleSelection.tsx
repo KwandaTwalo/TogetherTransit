@@ -5,10 +5,11 @@ import { router } from 'expo-router';
 
 const { width, height } = Dimensions.get('window');
 
-export default function WelcomeScreen() {
+export default function RoleSelection() {
+  // -----------------------------
+  // Animation values (same setup as Welcome.tsx)
+  // -----------------------------
   const fadeAnim = useRef(new Animated.Value(0)).current;
-
-  // Base animation values
   const blob1Anim = useRef(new Animated.Value(0)).current;
   const blob2Anim = useRef(new Animated.Value(0)).current;
   const blob3Anim = useRef(new Animated.Value(0)).current;
@@ -16,13 +17,14 @@ export default function WelcomeScreen() {
   const blobRotate = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    // Fade-in animation for the content
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 1200,
       useNativeDriver: true,
     }).start();
 
-    // Smooth oscillations
+    // Helper function for looping animations
     const loopAnim = (anim: Animated.Value, duration: number) => {
       Animated.loop(
         Animated.sequence([
@@ -32,11 +34,12 @@ export default function WelcomeScreen() {
       ).start();
     };
 
+    // Start blob animations (same durations as Welcome.tsx)
     loopAnim(blob1Anim, 5000);
     loopAnim(blob2Anim, 4000);
     loopAnim(blob3Anim, 6000);
 
-    // Scale pulse
+    // Scale pulse animation
     Animated.loop(
       Animated.sequence([
         Animated.timing(blobScale, { toValue: 1, duration: 3000, useNativeDriver: true }),
@@ -44,7 +47,7 @@ export default function WelcomeScreen() {
       ])
     ).start();
 
-    // Rotation loop
+    // Rotation loop for blob3
     Animated.loop(
       Animated.timing(blobRotate, {
         toValue: 1,
@@ -54,7 +57,9 @@ export default function WelcomeScreen() {
     ).start();
   }, []);
 
-  // Interpolations
+  // -----------------------------
+  // Interpolations (map animation values to movement/rotation)
+  // -----------------------------
   const blob1Y = blob1Anim.interpolate({ inputRange: [0, 1], outputRange: [-15, 15] });
   const blob2Y = blob2Anim.interpolate({ inputRange: [0, 1], outputRange: [-20, 20] });
   const blob3X = blob3Anim.interpolate({ inputRange: [0, 1], outputRange: [-15, 15] });
@@ -64,37 +69,38 @@ export default function WelcomeScreen() {
 
   return (
     <LinearGradient
-      colors={['#ffffff', '#f2f2f2', '#ff6b35']}
+      colors={['#ffffff', '#f2f2f2', '#ff6b35']} // Same gradient background
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.container}
     >
-      {/* Animated blobs */}
+      {/* Animated blobs (identical to Welcome.tsx) */}
       <Animated.View style={[styles.blob1, { transform: [{ translateY: blob1Y }, { scale: blobScaleVal }] }]} />
       <Animated.View style={[styles.blob2, { transform: [{ translateY: blob2Y }] }]} />
       <Animated.View style={[styles.blob3, { transform: [{ translateX: blob3X }, { translateY: blob3Y }, { rotate: blobRotateVal }] }]} />
 
-      {/* Content */}
+      {/* Content (different from Welcome.tsx) */}
       <Animated.View style={{ opacity: fadeAnim, alignItems: 'center' }}>
-        <Text style={styles.title} numberOfLines={1} adjustsFontSizeToFit>
-          TogetherTransit
-        </Text>
-        <Text style={styles.slogan}>Safe. Reliable. Simple.</Text>
+        {/* Question at the top */}
+        <Text style={styles.title}>Which one are you?</Text>
 
-        {/* Login button */}
-        <TouchableOpacity style={styles.buttonPrimary} onPress={() => router.replace('/Login')}>
-          <Text style={styles.buttonText}>Login</Text>
+        {/* Parent button */}
+        <TouchableOpacity style={styles.buttonPrimary} onPress={() => router.replace('/signup?role=parent')}>
+          <Text style={styles.buttonText}>Parent</Text>
         </TouchableOpacity>
 
-        {/* Signup button */}
-        <TouchableOpacity style={styles.buttonSecondary} onPress={() => router.replace('/signup?role=parent')}>
-          <Text style={styles.buttonTextSecondary}>Find Driver</Text>
+        {/* Driver button */}
+        <TouchableOpacity style={styles.buttonSecondary} onPress={() => router.replace('/signup?role=driver')}>
+          <Text style={styles.buttonTextSecondary}>Driver</Text>
         </TouchableOpacity>
       </Animated.View>
     </LinearGradient>
   );
 }
 
+// -----------------------------
+// Stylesheet
+// -----------------------------
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   blob1: {
@@ -136,14 +142,6 @@ const styles = StyleSheet.create({
     textShadowColor: '#ff6b35',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
-  },
-  slogan: {
-    color: '#333',
-    fontSize: width > 400 ? 22 : 18,
-    marginBottom: 40,
-    fontStyle: 'italic',
-    opacity: 0.9,
-    letterSpacing: 1,
   },
   buttonPrimary: {
     backgroundColor: '#ff6b35',

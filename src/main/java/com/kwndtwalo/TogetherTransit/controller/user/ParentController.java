@@ -1,11 +1,12 @@
 package com.kwndtwalo.TogetherTransit.controller.user;
 
+import com.kwndtwalo.TogetherTransit.domain.auth.Authentication;
 import com.kwndtwalo.TogetherTransit.domain.generic.Address;
 import com.kwndtwalo.TogetherTransit.domain.generic.Contact;
 import com.kwndtwalo.TogetherTransit.domain.users.Parent;
+import com.kwndtwalo.TogetherTransit.dto.auth.AuthenticationDTO;
 import com.kwndtwalo.TogetherTransit.dto.generic.AddressDTO;
 import com.kwndtwalo.TogetherTransit.dto.generic.ContactDTO;
-import com.kwndtwalo.TogetherTransit.dto.users.DriverDTO;
 import com.kwndtwalo.TogetherTransit.dto.users.ParentDTO;
 import com.kwndtwalo.TogetherTransit.service.users.ParentService;
 
@@ -41,13 +42,23 @@ public class ParentController {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
 
+        Authentication auth = null;
+        if (dto.getAuthentication() != null) {
+            auth = new Authentication.Builder()
+                    .setEmailAddress(dto.getAuthentication().getEmailAddress())
+                    .setPassword(dto.getAuthentication().getPassword())
+                    .setLastLogin(dto.getAuthentication().getLastLogin())
+                    .setLocked(dto.getAuthentication().isLocked())
+                    .build();
+        }
+
         Parent created = parentService.registerParent(
                 dto.getFirstName(),
                 dto.getLastName(),
                 null, // status ignored, service enforces ACTIVE
                 null, // Contact (can be added later)
                 null, // Address
-                null, // Authentication
+                auth, // Authentication
                 null // Role (service should assign default PARENT role)
 
         );
@@ -236,5 +247,64 @@ public class ParentController {
         // 5. RETURN RESPONSE
         // =========================================
         return ResponseEntity.ok(new ParentDTO(updated));
+    }
+
+    // add authentication.
+    @PutMapping("/{id}/authentication")
+    public ResponseEntity<?> attachAuthentication(
+            @PathVariable Long id,
+            @Valid @RequestBody AuthenticationDTO dto,
+            BindingResult result) {
+
+        // =========================================
+        // 1. VALIDATE INPUT (DTO LEVEL)
+        // =========================================
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+
+        // =========================================
+        // 2. FIND EXISTING PARENT
+        // =========================================
+        Parent parent = parentService.read(id);
+
+        if (parent == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // =========================================
+        // 3. CONVERT DTO → ENTITY
+        // =========================================
+        Authentication authentication = new Authentication.Builder()
+                .setEmailAddress(dto.getEmailAddress())
+                .setPassword(dto.getPassword())
+                .setLastLogin(dto.getLastLogin())
+                .setLocked(dto.isLocked())
+                .build();
+
+        // =========================================
+        // 4. ATTACH USING SERVICE LAYER
+        // (IMPORTANT: DO NOT BUILD PARENT HERE)
+        // =========================================
+        Parent updated = parentService.attachRelations(
+                parent,
+                parent.getContact(),
+                parent.getAddress(),
+                authentication,
+                parent.getRole());
+
+        // =========================================
+        // 5. RETURN RESPONSE
+        // =========================================
+        return ResponseEntity.ok(new ParentDTO(updated));
+    }
+
+    @GetMapping("/findByEmail/{email}")
+    public ResponseEntity<?> findByEmail(@PathVariable String email) {
+        Parent parent = parentService.findByEmail(email);
+        if (parent == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(new ParentDTO(parent));
     }
 }

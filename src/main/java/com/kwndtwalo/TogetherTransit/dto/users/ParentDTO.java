@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import com.kwndtwalo.TogetherTransit.domain.users.Parent;
 import com.kwndtwalo.TogetherTransit.domain.users.User;
+import com.kwndtwalo.TogetherTransit.dto.auth.AuthenticationDTO;
 import com.kwndtwalo.TogetherTransit.dto.generic.AddressDTO;
 import com.kwndtwalo.TogetherTransit.dto.generic.ContactDTO;
 
@@ -35,6 +36,11 @@ public class ParentDTO {
     // CONTACT FIELDS
     // ===============================
     private ContactDTO contact;
+
+    // ===============================
+    // AUTHENTICATION FIELDS
+    // ===============================
+    private AuthenticationDTO authentication;
 
     // ===============================
     // CONSTRUCTORS
@@ -75,6 +81,10 @@ public class ParentDTO {
 
     public ContactDTO getContact() {
         return contact;
+    }
+
+    public AuthenticationDTO getAuthentication() {
+        return authentication;
     }
 
 }

@@ -67,10 +67,11 @@ public class ParentService implements IParentService {
             return null; // cannot update non-existing parent
         }
 
-         // Use Builder COPY pattern to preserve existing state and only update fields that are allowed to change
+        // Use Builder COPY pattern to preserve existing state and only update fields
+        // that are allowed to change
         Parent merged = new Parent.Builder()
                 .copy(existing)
-                //.setUserId(existing.getUserId()) // ID must remain the same
+                // .setUserId(existing.getUserId()) // ID must remain the same
                 .setFirstName(parent.getFirstName())
                 .setLastName(parent.getLastName())
                 .setCreatedAt(existing.getCreatedAt()) // preserve original creation date
@@ -167,5 +168,9 @@ public class ParentService implements IParentService {
 
         return parentRepository.save(enriched);
 
+    }
+
+    public Parent findByEmail(String email) {
+        return parentRepository.findByAuthenticationEmailAddress(email).orElse(null);
     }
 }
