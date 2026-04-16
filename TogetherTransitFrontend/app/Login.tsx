@@ -9,11 +9,14 @@ import {
   KeyboardAvoidingView,
   Platform,
   Animated,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import CustomButton from '../components/customButton';
 import { Ionicons } from '@expo/vector-icons';
+import { login, getUserByEmail } from '../services/api';
 
 const { width, height } = Dimensions.get('window');
 
@@ -21,6 +24,7 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Animations
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -63,6 +67,38 @@ export default function LoginScreen() {
   const blob2Y = blob2Anim.interpolate({ inputRange: [0, 1], outputRange: [-20, 20] });
   const blobScaleVal = blobScale.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1.1] });
 
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter both email and password.');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Step 1: Authenticate
+      await login(email, password);
+      
+      // Step 2: Get user details and role
+      const user = await getUserByEmail(email);
+      
+      // Step 3: Route based on role
+      if (user.role === 'driver') {
+        router.replace('/driverHomeScreen' as const);
+      } else if (user.role === 'parent') {
+        router.replace('/parentHomeScreen' as const);
+      } else {
+        Alert.alert('Error', 'Unknown user role.');
+      }
+    } catch (error: any) {
+      console.error('Login error:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Login failed.';
+      Alert.alert('Error', errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  
   return (
     <LinearGradient
       colors={['#ffffff', '#f2f2f2', '#ff6b35']}
@@ -115,13 +151,16 @@ export default function LoginScreen() {
             <Text style={styles.linkText}>Forgot Password?</Text>
           </TouchableOpacity>
 
-          {/* Login button */}
-          <CustomButton title="Login" onPress={() => router.replace('/welcome')} />
+          {isLoading ? (
+            <ActivityIndicator size="large" color="#ff6b35" style={{ marginTop: 20 }} />
+          ) : (
+            <CustomButton title="Login" onPress={handleLogin} />
+          )}
 
           {/* Signup link below button */}
           <View style={styles.signupContainer}>
             <Text style={styles.signupText}>New User?</Text>
-            <TouchableOpacity onPress={() => router.replace('/welcome')}>
+            <TouchableOpacity onPress={() => router.replace('/roleSelection')}>
               <Text style={styles.signupLink}>Signup</Text>
             </TouchableOpacity>
           </View>

@@ -11,14 +11,12 @@ import java.util.List;
 @Service
 public class AuthenticationService implements IAuthenticationService {
 
-
     private IAuthenticationRepository authenticationRepository;
 
     @Autowired
     public AuthenticationService(IAuthenticationRepository authenticationRepository) {
         this.authenticationRepository = authenticationRepository;
     }
-
 
     /*
      * Create a new Authentication record.
@@ -59,7 +57,7 @@ public class AuthenticationService implements IAuthenticationService {
             return null;
         }
 
-        if(!authenticationRepository.existsById(authentication.getAuthenticationId())) {
+        if (!authenticationRepository.existsById(authentication.getAuthenticationId())) {
             return null;
         }
         return authenticationRepository.save(authentication);
@@ -70,31 +68,53 @@ public class AuthenticationService implements IAuthenticationService {
         return authenticationRepository.findAll();
     }
 
-    /*Delete By authentication ID*/
+    /* Delete By authentication ID */
     @Override
     public boolean delete(Long Id) {
-       if (!authenticationRepository.existsById(Id)) {
-           return false;
-       }
-       authenticationRepository.deleteById(Id);
-       return true;
+        if (!authenticationRepository.existsById(Id)) {
+            return false;
+        }
+        authenticationRepository.deleteById(Id);
+        return true;
     }
 
-    /** -------------------------------------------------
+    /**
+     * -------------------------------------------------
      * CUSTOM QUERY METHODS
-     * -------------------------------------------------*/
+     * -------------------------------------------------
+     */
+    public Authentication login(String emailAddress, String rawPassword) {
+        // 1. Find active (unlocked) account
+        Authentication auth = authenticationRepository
+                .findByEmailAddressAndLockedFalse(emailAddress)
+                .orElseThrow(() -> new RuntimeException("Invalid credentials or account locked"));
 
-    /*Login lookup*/
+        // 2. Verify password (plain-text for now, until you add PasswordEncoder later)
+        if (!auth.getPassword().equals(rawPassword)) {
+            throw new RuntimeException("Invalid credentials");
+        }
+
+        // 3. Rebuild Authentication with updated lastLogin using Builder copy
+        Authentication updatedAuth = new Authentication.Builder()
+                .copy(auth)
+                .setLastLogin(LocalDateTime.now())
+                .build();
+
+        // 4. Save and return updated Authentication
+        return authenticationRepository.save(updatedAuth);
+    }
+
+    /* Login lookup */
     public Authentication findByEmailAddress(String emailAddress) {
         return authenticationRepository.findByEmailAddress(emailAddress).orElse(null);
     }
 
-    /*Check if email already exists*/
+    /* Check if email already exists */
     public boolean emailAddressExists(String emailAddress) {
         return authenticationRepository.existsByEmailAddress(emailAddress);
     }
 
-    /*Locked accounts (security/admin*/
+    /* Locked accounts (security/admin */
     public List<Authentication> getLockedAccounts() {
         return authenticationRepository.findByLockedTrue();
     }
@@ -104,14 +124,14 @@ public class AuthenticationService implements IAuthenticationService {
         return authenticationRepository.findByLockedFalse();
     }
 
-    /*Login allowed only if account is unlocked */
+    /* Login allowed only if account is unlocked */
     public Authentication findActiveByEmailAddress(String emailAddress) {
         return authenticationRepository
                 .findByEmailAddressAndLockedFalse(emailAddress)
                 .orElse(null);
     }
 
-    /*Accounts that never logged in */
+    /* Accounts that never logged in */
     public List<Authentication> getNeverLoggedInAccounts() {
         return authenticationRepository.findByLastLoginIsNull();
     }
@@ -125,6 +145,5 @@ public class AuthenticationService implements IAuthenticationService {
     public List<Authentication> searchByEmailDomain(String domain) {
         return authenticationRepository.findByEmailAddressContainingIgnoreCase(domain);
     }
-
 
 }

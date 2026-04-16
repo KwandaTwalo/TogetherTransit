@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import com.kwndtwalo.TogetherTransit.domain.users.Driver;
 import com.kwndtwalo.TogetherTransit.domain.users.User;
+import com.kwndtwalo.TogetherTransit.dto.auth.AuthenticationDTO;
 import com.kwndtwalo.TogetherTransit.dto.generic.AddressDTO;
 import com.kwndtwalo.TogetherTransit.dto.generic.ContactDTO;
 
@@ -27,7 +28,7 @@ public class DriverDTO {
     @NotNull(message = "Created date is required")
     private LocalDate createdAt;
 
-    //@NotNull(message = "Account status is required")
+    // @NotNull(message = "Account status is required")
     private User.AccountStatus accountStatus;
 
     // ===============================
@@ -52,16 +53,22 @@ public class DriverDTO {
     private ContactDTO contact;
 
     // ===============================
+    // AUTHENTICATION FIELDS
+    // ===============================
+    private AuthenticationDTO authentication;
+
+    // ===============================
     // CONSTRUCTORS
     // ===============================
-    public DriverDTO() {}
+    public DriverDTO() {
+    }
 
     // ENTITY → DTO (VERY IMPORTANT FOR RESPONSES)
     public DriverDTO(Driver driver) {
         this.firstName = driver.getFirstName();
         this.lastName = driver.getLastName();
         this.createdAt = driver.getCreatedAt();
-        //this.accountStatus = driver.getAccountStatus();
+        // this.accountStatus = driver.getAccountStatus();
         this.licenseNumber = driver.getLicenseNumber();
         this.ratingAverage = driver.getRatingAverage();
     }
@@ -69,12 +76,39 @@ public class DriverDTO {
     // ===============================
     // GETTERS ONLY
     // ===============================
-    public String getFirstName() { return firstName; }
-    public String getLastName() { return lastName; }
-    public LocalDate getCreatedAt() { return createdAt; }
-    public User.AccountStatus getAccountStatus() { return accountStatus; }
-    public String getLicenseNumber() { return licenseNumber; }
-    public int getRatingAverage() { return ratingAverage; }
-    public AddressDTO getAddress() { return address; }
-    public ContactDTO getContact() { return contact; }
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public User.AccountStatus getAccountStatus() {
+        return accountStatus;
+    }
+
+    public String getLicenseNumber() {
+        return licenseNumber;
+    }
+
+    public int getRatingAverage() {
+        return ratingAverage;
+    }
+
+    public AddressDTO getAddress() {
+        return address;
+    }
+
+    public ContactDTO getContact() {
+        return contact;
+    }
+
+    public AuthenticationDTO getAuthentication() {
+        return authentication;
+    }
 }

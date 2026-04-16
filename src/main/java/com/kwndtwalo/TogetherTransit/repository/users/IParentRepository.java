@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface IParentRepository extends JpaRepository<Parent, Long> {
 
     Optional<Parent> findByFirstNameAndLastName(String firstName, String lastName);
+
+    Optional<Parent> findByAuthenticationEmailAddress(String email);
 }

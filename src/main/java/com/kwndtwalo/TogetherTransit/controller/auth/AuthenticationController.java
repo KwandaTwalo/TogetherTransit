@@ -34,8 +34,7 @@ public class AuthenticationController {
     @PostMapping("/create")
     public ResponseEntity<?> create(
             @Valid @RequestBody AuthenticationDTO authDTO, // 1. Validate DTO input
-            BindingResult result
-    ) {
+            BindingResult result) {
         if (result.hasErrors()) { // 2. If validation failed
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
@@ -45,8 +44,7 @@ public class AuthenticationController {
                 authDTO.getEmailAddress(),
                 authDTO.getPassword(),
                 authDTO.getLastLogin(),
-                authDTO.isLocked()
-        );
+                authDTO.isLocked());
 
         if (auth == null) { // 4. Factory rejected invalid input
             return ResponseEntity.badRequest().body("Invalid authentication data");
@@ -86,8 +84,7 @@ public class AuthenticationController {
     public ResponseEntity<?> update(
             @Valid @RequestBody AuthenticationDTO authDTO, // 1. Validate DTO input
             BindingResult result,
-            @PathVariable Long Id
-    ) {
+            @PathVariable Long Id) {
         if (result.hasErrors()) { // 2. Validation failed
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
@@ -132,6 +129,27 @@ public class AuthenticationController {
             return ResponseEntity.notFound().build(); // 404 if not found
         }
         return ResponseEntity.ok("Authentication deleted successfully");
+    }
+
+    /**
+     * LOGIN Authentication
+     * ---------------------
+     * Business Rules:
+     * - Account must exist.
+     * - Account must not be locked.
+     * - Password must match.
+     * - lastLogin must update on success.
+     */
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody AuthenticationDTO authDTO) {
+        try {
+            Authentication loggedIn = authenticationService.login(
+                    authDTO.getEmailAddress(),
+                    authDTO.getPassword());
+            return ResponseEntity.ok(loggedIn);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(401).body(e.getMessage());
+        }
     }
 
 }

@@ -1,8 +1,10 @@
 package com.kwndtwalo.TogetherTransit.controller.user;
 
+import com.kwndtwalo.TogetherTransit.domain.auth.Authentication;
 import com.kwndtwalo.TogetherTransit.domain.generic.Address;
 import com.kwndtwalo.TogetherTransit.domain.generic.Contact;
 import com.kwndtwalo.TogetherTransit.domain.users.Driver;
+import com.kwndtwalo.TogetherTransit.dto.auth.AuthenticationDTO;
 import com.kwndtwalo.TogetherTransit.dto.generic.AddressDTO;
 import com.kwndtwalo.TogetherTransit.dto.generic.ContactDTO;
 import com.kwndtwalo.TogetherTransit.dto.users.DriverDTO;
@@ -15,11 +17,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/driver")
 public class DriverController {
+
+    private static final Logger logger = LoggerFactory.getLogger(DriverController.class);
 
     private final DriverService driverService;
 
@@ -34,10 +41,23 @@ public class DriverController {
     @PostMapping("/create")
     public ResponseEntity<?> create(@Valid @RequestBody DriverDTO dto,
             BindingResult result) {
+        logger.debug("Received driver signup request: {}", dto);
 
         // 1. DTO validation
         if (result.hasErrors()) {
+            logger.error("Validation errors: {}", result.getAllErrors());
             return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+
+        // Create Authentication from DTO.
+        Authentication auth = null;
+        if (dto.getAuthentication() != null) {
+            auth = new Authentication.Builder()
+                    .setEmailAddress(dto.getAuthentication().getEmailAddress())
+                    .setPassword(dto.getAuthentication().getPassword())
+                    .setLastLogin(dto.getAuthentication().getLastLogin())
+                    .setLocked(dto.getAuthentication().isLocked())
+                    .build();
         }
 
         /*
@@ -56,7 +76,7 @@ public class DriverController {
                 null, // status ignored, service enforces UNDER_REVIEW
                 null, // Contact (can be added later)
                 null, // Address
-                null, // Authentication
+                auth, // Authentication
                 null // Role (service should assign default DRIVER role)
         );
 
@@ -114,8 +134,8 @@ public class DriverController {
                 .setLastName(dto.getLastName())
                 .setLicenseNumber(dto.getLicenseNumber())
                 .setRatingAverage(dto.getRatingAverage())
-                //.setAccountStatus(dto.getAccountStatus())
-                .setAddress(address) 
+                // .setAccountStatus(dto.getAccountStatus())
+                .setAddress(address)
                 .build();
 
         Driver updated = driverService.update(updatedDriver);
@@ -234,5 +254,51 @@ public class DriverController {
         // 5. RETURN RESPONSE
         // =========================================
         return ResponseEntity.ok(new DriverDTO(updated));
+    }
+
+    // add authentication.
+    @PutMapping("/{id}/authentication")
+    public ResponseEntity<?> attachAuthentication(
+            @PathVariable Long id,
+            @Valid @RequestBody AuthenticationDTO dto,
+            BindingResult result) {
+
+        // =========================================
+        // 1. VALIDATE INPUT (DTO LEVEL)
+        // =========================================
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+
+        Driver driver = driverService.read(id);
+
+        if (driver == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Authentication authentication = new Authentication.Builder()
+                .setEmailAddress(dto.getEmailAddress())
+                .setPassword(dto.getPassword())
+                .setLastLogin(dto.getLastLogin())
+                .setLocked(dto.isLocked())
+                .build();
+
+        Driver updated = driverService.attachRelations(
+                driver,
+                driver.getContact(),
+                driver.getAddress(),
+                authentication,
+                driver.getRole());
+
+        return ResponseEntity.ok(new DriverDTO(updated));
+    }
+
+    @GetMapping("/findByEmail/{email}")
+    public ResponseEntity<DriverDTO> findByEmail(@PathVariable String email) {
+        Driver driver = driverService.findByEmail(email);
+        if (driver == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(new DriverDTO(driver));
     }
 }
